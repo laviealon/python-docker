@@ -1,100 +1,87 @@
+"""API webservice using the Flask web framework which increments a counter every time the relevant endpoint is
+hit. Count is persisted in a MySQL database.
+
+See README.md for info on how to spin up the docker container and initialize the database.
+
+Authored by: Alon Lavie, June 2022.
+"""
+
 import mysql.connector
-import json
 from flask import Flask
 
 app = Flask(__name__)
 
 
 @app.route('/')
-def hello_world():
-    return 'Hello, Docker!'
-
-
-# @app.route('/widgets')
-# def get_widgets():
-#     mydb = mysql.connector.connect(
-#         host="mysqldb",
-#         user="root",
-#         password="p@ssw0rd1",
-#         database="inventory"
-#     )
-#     cursor = mydb.cursor()
-#
-#     cursor.execute("SELECT * FROM widgets")
-#
-#     row_headers = [x[0] for x in cursor.description]  # this will extract row headers
-#
-#     results = cursor.fetchall()
-#     json_data = []
-#     for result in results:
-#         json_data.append(dict(zip(row_headers, result)))
-#
-#     cursor.close()
-#
-#     return json.dumps(json_data)
+def app_run():
+    """ Test localhost endpoint to ensure app has run successfully.
+    """
+    return 'app run successfully'
 
 
 @app.route('/counter')
 def increment():
-    mydb = mysql.connector.connect(
+    """ Connect to MySQL DB, increment counter, and fetch the newly updated value.
+    """
+    db = mysql.connector.connect(
         host="mysqldb",
         user="root",
         password="p@ssw0rd1",
         database="counter_inv"
     )
-    cursor = mydb.cursor()
+    cursor = db.cursor()
+    cursor.execute("UPDATE counters SET value = value + 1")
+    db.commit()
     cursor.execute("SELECT * FROM counters LIMIT 1")
 
-    # row_headers = [x[0] for x in cursor.description]  # this will extract row headers
-
     results = str(cursor.fetchall()[0][1])
-    # json_data = []
-    # for result in results:
-    #     json_data.append(dict(zip(row_headers, result)))
-
     cursor.close()
+    db.close()
 
-    # return json.dumps(json_data)
     return results
 
 
 @app.route('/initdb')
 def db_init():
-    mydb = mysql.connector.connect(
+    """ Initialize MySQL DB with one counter set to value 0. To be called whenever the DB is to be
+    initiated or reset.
+    """
+    db = mysql.connector.connect(
         host="mysqldb",
         user="root",
         password="p@ssw0rd1"
     )
-    cursor = mydb.cursor()
+    cursor = db.cursor()
 
     cursor.execute("DROP DATABASE IF EXISTS counter_inv")
     cursor.execute("CREATE DATABASE counter_inv")
     cursor.close()
 
-    mydb = mysql.connector.connect(
+    db = mysql.connector.connect(
         host="mysqldb",
         user="root",
         password="p@ssw0rd1",
         database="counter_inv"
     )
-    cursor = mydb.cursor()
+    cursor = db.cursor()
 
     cursor.execute("DROP TABLE IF EXISTS counters")
     cursor.execute("CREATE TABLE counters (id int, value int);")
     cursor.close()
 
-    mydb = mysql.connector.connect(
+    db = mysql.connector.connect(
         host="mysqldb",
         user="root",
         password="p@ssw0rd1",
         database="counter_inv"
     )
-    cursor = mydb.cursor()
+    cursor = db.cursor()
     cursor.execute("INSERT INTO counters (value) VALUES (0);")
-    mydb.commit()
+    db.commit()
     cursor.close()
+    db.close()
 
-    return 'init database'
+    return 'database initiated successfully'
 
 
 if __name__ == "__main__":

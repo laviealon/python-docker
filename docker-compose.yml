@@ -5,14 +5,14 @@ services:
   build:
    context: .
   ports:
-  - 8000:5000
+  - "8000:5000"
   volumes:
   - ./:/app
 
  mysqldb:
   image: mysql
   ports:
-  - 3306:3306
+  - "3306:3306"
   environment:
   - MYSQL_ROOT_PASSWORD=p@ssw0rd1
   volumes:
