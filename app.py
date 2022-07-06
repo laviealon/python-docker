@@ -3,26 +3,33 @@ hit. Count is persisted in a MySQL database.
 
 See README.md for info on how to spin up the docker container and initialize the database.
 
-Authored by: Alon Lavie, June 2022.
+Copyright Alon Lavie (c) June 2022.
 """
-
-import mysql.connector
-from flask import Flask
+import os
+from flask import jsonify, request, Flask
+from flaskext.mysql import MySQL
 
 app = Flask(__name__)
 
+mysql = MySQL()
+
+# MySQL configurations
+app.config["MYSQL_DATABASE_USER"] = "root"
+app.config["MYSQL_DATABASE_PASSWORD"] = os.getenv("db_root_password")
+app.config["MYSQL_DATABASE_DB"] = os.getenv("db_name")
+app.config["MYSQL_DATABASE_HOST"] = os.getenv("MYSQL_SERVICE_HOST")
+app.config["MYSQL_DATABASE_PORT"] = int(os.getenv("MYSQL_SERVICE_PORT"))
+mysql.init_app(app)
 
 @app.route('/')
 def app_run():
-    """ Test localhost endpoint to ensure app has run successfully.
-    """
+    """ Test localhost endpoint to ensure app has run successfully."""
     return 'app run successfully'
 
 
 @app.route('/counter')
 def increment():
-    """ Connect to MySQL DB, increment counter, and fetch the newly updated value.
-    """
+    """ Connect to MySQL DB, increment counter, and fetch the newly updated value."""
     db = mysql.connector.connect(
         host="mysqldb",
         user="root",

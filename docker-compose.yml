@@ -4,8 +4,11 @@ services:
  web:
   build:
    context: .
+  labels:
+    kompose.service.type: NodePort
   ports:
   - "8000:5000"
+  -
   volumes:
   - ./:/app
 

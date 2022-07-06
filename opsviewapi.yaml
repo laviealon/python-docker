@@ -1,0 +1,45 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opsviewapi-1-deployment
+  labels:
+    app: opsviewapi-1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opsviewapi-1
+  template:
+    metadata:
+      labels:
+        app: opsviewapi-1
+    spec:
+      containers:
+        - name: opsviewapi-1
+          image: opsviewapi-1
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5000
+          env:
+            - name: db_root_password
+              valueFrom:
+                secretKeyRef:
+                  name: opsviewapi-secrets
+                  key: db_root_password
+            - name: db_name
+              value: opsviewapi-1
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: opsviewapi-service
+spec:
+  ports:
+  - port: 5000
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: opsviewapi-1
+  type: LoadBalancer
