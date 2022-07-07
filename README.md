@@ -52,4 +52,4 @@ and accessing the returned endpoint. After recieving message ```app run successf
 
 ---
 
-Alon Lavie "copyright; 2022
+Copyright &copy; Alon Lavie 2022
