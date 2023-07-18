@@ -5,43 +5,6 @@ See README.md for info on how to spin up the docker container and initialize the
 
 Copyright Alon Lavie (c) June 2022.
 """
-"""Code for a flask API to Create, Read, Update, Delete users"""
-# import os
-# from flask import jsonify, request, Flask
-# from flaskext.mysql import MySQL
-#
-# app = Flask(__name__)
-#
-# mysql = MySQL()
-#
-#
-#
-# @app.route("/")
-# def index():
-#     """Function to test the functionality of the API"""
-#     return "Hello, world!"
-#
-#
-# @app.route("/init_db")
-# def init_db():
-#     """Function to add a user to the MySQL database"""
-#     # MySQL configurations
-#     try:
-#         app.config["MYSQL_DATABASE_USER"] = "root"
-#         app.config["MYSQL_DATABASE_PASSWORD"] = os.getenv("db_root_password")
-#         app.config["MYSQL_DATABASE_HOST"] = os.getenv("MYSQL_SERVICE_HOST")
-#         app.config["MYSQL_DATABASE_PORT"] = int(os.getenv("MYSQL_SERVICE_PORT"))
-#         mysql.init_app(app)
-#         conn = mysql.connect()
-#         cursor = conn.cursor()
-#         cursor.execute("DROP DATABASE IF EXISTS counter_inv")
-#         cursor.execute("CREATE DATABASE counter_inv")
-#         cursor.close()
-#         conn.close()
-#         return "database initialized successfully"
-#     except Exception as exception:
-#         return jsonify(str(exception))
-
 import mysql.connector
 from flask import Flask
 
